@@ -59,7 +59,9 @@ df=left_join(pols_month_df,snp_df)|>
 str(df)
 ```
 
-Discussion: The `pols-month` file comprises `r nrow(pols_month_df)` observations across `r ncol(pols_month_df)` variables, providing insights into the count of national politicians affiliated with the Democratic or Republican parties from  years `r range(pull(pols_month_df, year))[1]` to `r range(pull(pols_month_df, year))[2]`. The `snp` file encompasses `r nrow(snp_df)` observations, featuring `r ncol(snp_df)` variables that offer insights into Standard & Poor's stock market index (S&P) ranging from years `r range(pull(snp_df, year))[1]` to `r range(pull(snp_df, year))[2]`. Widely recognized as a representative measure of the overall stock market, these variables provide valuable information on market trends and performance. The file `unemployment` contains `r nrow(unemp_df)` observations of `r ncol(unemp_df)` variables ranging from years `r range(pull(unemp_df, year))[1]` to `r range(pull(unemp_df, year))[2]`. The average unemployment rate is `r mean(na.omit(pull(unemp_df, percentage)))`.
+#Discussion:
+
+The `pols-month` file comprises `r nrow(pols_month_df)` observations across `r ncol(pols_month_df)` variables, providing insights into the count of national politicians affiliated with the Democratic or Republican parties from  years `r range(pull(pols_month_df, year))[1]` to `r range(pull(pols_month_df, year))[2]`. The `snp` file encompasses `r nrow(snp_df)` observations, featuring `r ncol(snp_df)` variables that offer insights into Standard & Poor's stock market index (S&P) ranging from years `r range(pull(snp_df, year))[1]` to `r range(pull(snp_df, year))[2]`. Widely recognized as a representative measure of the overall stock market, these variables provide valuable information on market trends and performance. The file `unemployment` contains `r nrow(unemp_df)` observations of `r ncol(unemp_df)` variables ranging from years `r range(pull(unemp_df, year))[1]` to `r range(pull(unemp_df, year))[2]`. The average unemployment rate is `r mean(na.omit(pull(unemp_df, percentage)))`.
 
 For the resulting `df`, it has `r nrow(df)` observations across `r ncol(df)` variables with years ranging from `r range(pull(df, year))[1]` to `r range(pull(df, year))[2]`. Variables include:
 
@@ -121,3 +123,6 @@ Then combine these datasets.
 combined_df=bind_rows(mr_df,prof_df,gwy_df)
 ```
 
+#Description:
+
+The `combined_df` comprises `r nrow(combined_df)` observations across `r ncol(combined_df)` variables, ranging from years `r range(combined_df$year)[1]` to `r range(combined_df$year)[2]`. The combined dataset includes information on the dumpter number, date of collection, amount of total litter and litter type as well as three different trash wheel(Mr. Trash Wheel, Professor Trash wheel, Gwynnda Trash Wheel). The total weight of trash collected by Professor Trash Wheel is `r filter(combined_df, trash_wheel=='professor')|>pull(weight_tons)|>sum()` tons. The total number of cigarette butts collected by Gwynnda in July of 2021 is `r filter(combined_df, trash_wheel=="gwynnda",year==2021,month=="July")|>pull(cigarette_butts)|>sum()`.
