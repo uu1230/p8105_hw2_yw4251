@@ -120,7 +120,9 @@ gwy_df=
 Then combine these datasets.
 
 ```{r}
-combined_df=bind_rows(mr_df,prof_df,gwy_df)
+combined_df=bind_rows(mr_df,prof_df,gwy_df)|>
+  mutate(homes_powered=round(homes_powered,digits=0))
+str(combined_df)
 ```
 
 #Description:
