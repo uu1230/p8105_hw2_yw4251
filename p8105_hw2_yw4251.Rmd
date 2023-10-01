@@ -5,3 +5,23 @@ date: 2023-10-01
 output: github_document
 ---
 
+```{r}
+library(tidyverse)
+library(dplyr)
+```
+
+
+# Problem 1
+Apply function`month.name`to replace month number with month name.
+```{r}
+pols_month_df=
+  read_csv("data/pols-month.csv")|>
+  separate(mon,into=c("year","month","day"),sep="-")|>
+  mutate(
+    month=month.name[as.numeric(month)],
+    president=recode(prez_gop,"0" = "dem", "1" = "gop", "2" = "gop")
+  )|>
+  select(-prez_dem,-prez_gop,-day)
+  
+```
+
