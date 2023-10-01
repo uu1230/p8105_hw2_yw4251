@@ -7,12 +7,11 @@ output: github_document
 
 ```{r}
 library(tidyverse)
-library(dplyr)
 ```
 
 
 # Problem 1
-Apply function`month.name`to replace month number with month name.
+Clean `pols-month.csv`. Apply function`month.name`to replace month number with month name.
 ```{r}
 pols_month_df=
   read_csv("data/pols-month.csv")|>
@@ -24,18 +23,19 @@ pols_month_df=
   select(-prez_dem,-prez_gop,-day)
   
 ```
-Now snp.csv
+similarly, clean `snp.csv`
 ```{r}
 snp_df=
   read_csv("data/snp.csv")|>
-  separate(date,into=c("month","day","year"),convert=TRUE)|>
+  mutate(date = as.Date(date, format = "%m/%d/%y"))|>
+  separate(date,into=c("year","month","day"),convert=TRUE)|>
   arrange(year,month)|>
   mutate(
     month=month.name[as.numeric(month)]
   )|>
   select(year,month,close)
 ```
-Next, Unemployment data.
+Next, Clean `Unemployment data`.
 
 ```{r}
 unemp_df=
@@ -48,4 +48,36 @@ unemp_df=
   rename(year=Year)
   
 ```
+Now merge:
 
+```{r}
+df=left_join(pols_month_df,snp_df)|>
+  mutate(month=substr(month,1,3))|>
+  left_join(x= _,unemp_df)
+
+str(df)
+```
+
+Discussion: The `pols-month` file comprises `r nrow(pols_month_df)` observations across `r ncol(pols_month_df)` variables, providing insights into the count of national politicians affiliated with the Democratic or Republican parties from  years `r range(pull(pols_month_df, year))[1]` to `r range(pull(pols_month_df, year))[2]`. The `snp` file encompasses `r nrow(snp_df)` observations, featuring `r ncol(snp_df)` variables that offer insights into Standard & Poor's stock market index (S&P) ranging from years `r range(pull(snp_df, year))[1]` to `r range(pull(snp_df, year))[2]`. Widely recognized as a representative measure of the overall stock market, these variables provide valuable information on market trends and performance. The file `unemployment` contains `r nrow(unemp_df)` observations of `r ncol(unemp_df)` variables ranging from years `r range(pull(unemp_df, year))[1]` to `r range(pull(unemp_df, year))[2]`. The average unemployment rate is `r mean(na.omit(pull(unemp_df, percentage)))`.
+
+For the resulting `df`, it has `r nrow(df)` observations across `r ncol(df)` variables with years ranging from `r range(pull(df, year))[1]` to `r range(pull(df, year))[2]`. Variables include:
+
+**_gov_gop:_** the number of republican governors on the associated date
+
+**_sen_gop:_** the number of republican senators on the associated date
+
+**_rep_gop:_** the number of republican representatives on the associated date
+
+**_gov_dem:_** the number of democratic governors on the associated date
+
+**_sen_dem:_** the number of democratic senators on the associated date
+
+**_rep_dem:_** the number of democratic representatives on the associated date
+
+**_president:_**: the party affiliation of the politician
+
+**_close:_** the closing values of the S&P stock index on the associated date. The average closing rate is `r mean(na.omit(pull(df, close)))`.
+
+**_percentage:_** the percentage of unemployment.The average unemployment rate is `r mean(na.omit(pull(df, percentage)))`.
+
+#Problem 2
