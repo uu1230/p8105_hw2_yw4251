@@ -87,7 +87,7 @@ For the resulting `df`, it has `r nrow(df)` observations across `r ncol(df)` var
 Clean `Mr. Trash Wheel`.
 ```{r}
 mr_df=
-  readxl::read_excel("data/202207 Trash Wheel Collection Data.xlsx",sheet=1,range="A2:N550")|>
+  readxl::read_excel("data/202309 Trash Wheel Collection Data.xlsx",sheet=1,range="A2:N587")|>
   janitor::clean_names()|>
   filter(!is.na(dumpster))|>
   mutate(homes_powered=weight_tons*500/30,
@@ -98,7 +98,7 @@ mr_df=
 Clean `Professor Trash Wheel`.
 ```{r}
 prof_df=
-  readxl::read_excel("data/202207 Trash Wheel Collection Data.xlsx",sheet=2,range="A2:M97")|>
+  readxl::read_excel("data/202309 Trash Wheel Collection Data.xlsx",sheet=2,range="A2:M109")|>
   janitor::clean_names()|>
   filter(!is.na(dumpster))|>
   mutate(homes_powered=weight_tons*500/30,
@@ -108,7 +108,7 @@ prof_df=
 Clean `Gwynnda Trash Wheel`
 ```{r}
 gwy_df=
-  readxl::read_excel("data/202207 Trash Wheel Collection Data.xlsx",sheet=4,range="A2:K110")|>
+  readxl::read_excel("data/202309 Trash Wheel Collection Data.xlsx",sheet=4,range="A2:L159")|>
   janitor::clean_names()|>
   filter(!is.na(dumpster))|>
   mutate(homes_powered=weight_tons*500/30,
@@ -151,7 +151,7 @@ The `MCI baseline` data comprises `r nrow(baseline_df)` observations across `r n
 Next, clean `MCI amyloid` data, and skip the first row of description. I use `janitor` function to standardize column names. Then, turn all columns to numeric variable.
 ```{r}
 amyloid_df=
-  read_csv("data/mci_amyloid.csv",skip=1)|>
+  read_csv("data/mci_amyloid.csv",skip=1,na=c('Na',"NA"))|>
   janitor::clean_names()|>
   rename(id=study_id)|>
   as.data.frame(lapply(amyloid_df, as.numeric))
