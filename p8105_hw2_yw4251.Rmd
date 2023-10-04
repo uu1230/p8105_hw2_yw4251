@@ -4,14 +4,14 @@ author: "You Wu"
 date: 2023-10-01
 output: github_document
 ---
-## Problem 0
+# Problem 0
 ```{r}
 library(tidyverse)
 library(readxl)
 ```
 
 
-## Problem 1
+# Problem 1
 Clean `pols-month.csv`. Apply function`month.name`to replace month number with month name.
 ```{r}
 pols_month_df=
@@ -59,7 +59,7 @@ df=left_join(pols_month_df,snp_df)|>
 str(df)
 ```
 
-# Discussion:
+## Discussion:
 
 The `pols-month` file comprises `r nrow(pols_month_df)` observations across `r ncol(pols_month_df)` variables, providing insights into the count of national politicians affiliated with the Democratic or Republican parties from  years `r range(pull(pols_month_df, year))[1]` to `r range(pull(pols_month_df, year))[2]`. The `snp` file encompasses `r nrow(snp_df)` observations, featuring `r ncol(snp_df)` variables that offer insights into Standard & Poor's stock market index (S&P) ranging from years `r range(pull(snp_df, year))[1]` to `r range(pull(snp_df, year))[2]`. Widely recognized as a representative measure of the overall stock market, these variables provide valuable information on market trends and performance. The file `unemployment` contains `r nrow(unemp_df)` observations of `r ncol(unemp_df)` variables ranging from years `r range(pull(unemp_df, year))[1]` to `r range(pull(unemp_df, year))[2]`. The average unemployment rate is `r mean(na.omit(pull(unemp_df, percentage)))`.
 
@@ -79,11 +79,11 @@ For the resulting `df`, it has `r nrow(df)` observations across `r ncol(df)` var
 
 **_president:_**: the party affiliation of the politician
 
-**_close:_** the closing values of the S&P stock index on the associated date. The average closing rate is `r mean(na.omit(pull(df, close)))`.
+**_close:_** the closing values of the S&P stock index on the associated date. The average closing rate is `r round(mean(na.omit(pull(df, close))),2)`.
 
 **_percentage:_** the percentage of unemployment.The average unemployment rate is `r mean(na.omit(pull(df, percentage)))`.
 
-## Problem 2
+# Problem 2
 Clean `Mr. Trash Wheel`.
 ```{r}
 mr_df=
@@ -125,11 +125,11 @@ combined_df=bind_rows(mr_df,prof_df,gwy_df)|>
 str(combined_df)
 ```
 
-# Description:
+## Description:
 
 The `combined_df` comprises `r nrow(combined_df)` observations across `r ncol(combined_df)` variables, ranging from years `r range(combined_df$year)[1]` to `r range(combined_df$year)[2]`. The combined dataset includes information on the dumpter number, date of collection, amount of total litter and litter type as well as three different trash wheel(Mr. Trash Wheel, Professor Trash wheel, Gwynnda Trash Wheel). The total weight of trash collected by Professor Trash Wheel is `r filter(combined_df, trash_wheel=='professor')|>pull(weight_tons)|>sum()` tons. The total number of cigarette butts collected by Gwynnda in July of 2021 is `r filter(combined_df, trash_wheel=="gwynnda",year==2021,month=="July")|>pull(cigarette_butts)|>sum()`.
 
-## Problem 3
+# Problem 3
 
 Import `MCI baseline` data, and skip the first row of description. I use `janitor` function to standardize column names. Then convert `sex` variable and `apoe4` variable to factor variable, and convert `age at onset` variable to numeric variable.
 ```{r}
@@ -144,20 +144,26 @@ baseline_df=
   filter(!is.na(age_at_onset))
 ```
 
-# Discussion
+## Discussion
 
-The `MCI baseline` data comprises `r nrow(baseline_df)` observations across `r ncol(baseline_df)` variables. The dataset contains information of current age, sex, year of education, APOE4 carrier and age at onset of MCI. For participants who develop MCI, their average baseline age is `r mean(baseline_df$age_at_onset)`, and their current age ranges from `r range(baseline_df$current_age)[1]` to `r range(baseline_df$current_age)[2]`. Altogether, `r nrow(read_csv("data/MCI_baseline.csv",skip=1))` participates are recruited. Among them, `r nrow(baseline_df)` develop MCI. In the study, `r nrow(filter(baseline_df, sex==0,apoe4==1))/nrow(read_csv("data/MCI_baseline.csv",skip=1))*100`%  women are APOE4 carriers.
+The `MCI baseline` data comprises `r nrow(baseline_df)` observations across `r ncol(baseline_df)` variables. The dataset contains information of current age, sex, year of education, APOE4 carrier and age at onset of MCI. For participants who develop MCI, their average baseline age is `r round(mean(baseline_df$current_age),2)`, and their current age ranges from `r range(baseline_df$current_age)[1]` to `r range(baseline_df$current_age)[2]`. Altogether, `r nrow(read_csv("data/MCI_baseline.csv",skip=1))` participates are recruited. Among them, `r nrow(baseline_df)` develop MCI. In the study, `r round(nrow(filter(baseline_df, sex==0,apoe4==1))/nrow(filter(baseline_df,sex==0))*100,2)`%  women are APOE4 carriers.
 
 Next, clean `MCI amyloid` data, and skip the first row of description. I use `janitor` function to standardize column names. Then, turn all columns to numeric variable.
 ```{r}
 amyloid_df=
   read_csv("data/mci_amyloid.csv",skip=1,na=c('Na',"NA"))|>
   janitor::clean_names()|>
-  rename(id=study_id)|>
+  rename(id=study_id,time_0=baseline)|>
+  pivot_longer(
+    baseline:time_8,
+    names_to="time",
+    values_to="42/40 ratio",
+    prefix_names("time_")
+  )|>
   as.data.frame(lapply(amyloid_df, as.numeric))
 ```
 
-# Discussion
+## Discussion
 
 The `MCI amyloid` data comprises `r nrow(amyloid_df)` observations across `r ncol(amyloid_df)` variables. The dataset keeps record of biomarker Amyloid β42/40 ratio in different time.
 
