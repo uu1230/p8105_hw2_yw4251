@@ -24,7 +24,7 @@ pols_month_df=
   select(-prez_dem,-prez_gop,-day)
   
 ```
-similarly, clean `snp.csv`
+Similarly, clean `snp.csv`.
 ```{r}
 snp_df=
   read_csv("data/snp.csv")|>
@@ -61,7 +61,7 @@ str(df)
 
 ## Discussion:
 
-The `pols-month` file comprises `r nrow(pols_month_df)` observations across `r ncol(pols_month_df)` variables, providing insights into the count of national politicians affiliated with the Democratic or Republican parties from  years `r range(pull(pols_month_df, year))[1]` to `r range(pull(pols_month_df, year))[2]`. The `snp` file encompasses `r nrow(snp_df)` observations, featuring `r ncol(snp_df)` variables that offer insights into Standard & Poor's stock market index (S&P) ranging from years `r range(pull(snp_df, year))[1]` to `r range(pull(snp_df, year))[2]`. Widely recognized as a representative measure of the overall stock market, these variables provide valuable information on market trends and performance. The file `unemployment` contains `r nrow(unemp_df)` observations of `r ncol(unemp_df)` variables ranging from years `r range(pull(unemp_df, year))[1]` to `r range(pull(unemp_df, year))[2]`. The average unemployment rate is `r mean(na.omit(pull(unemp_df, percentage)))`.
+The `pols-month` file comprises `r nrow(pols_month_df)` observations across `r ncol(pols_month_df)` variables, providing insights into the count of national politicians affiliated with the Democratic or Republican parties from  years `r range(pull(pols_month_df, year))[1]` to `r range(pull(pols_month_df, year))[2]`. The `snp` file encompasses `r nrow(snp_df)` observations, featuring `r ncol(snp_df)` variables that offer insights into Standard & Poor's stock market index (S&P) ranging from years `r range(pull(snp_df, year))[1]` to `r range(pull(snp_df, year))[2]`. Widely recognized as a representative measure of the overall stock market, these variables provide valuable information on market trends and performance. The file `unemployment` contains `r nrow(unemp_df)` observations of `r ncol(unemp_df)` variables ranging from years `r range(pull(unemp_df, year))[1]` to `r range(pull(unemp_df, year))[2]`. The average unemployment rate is `r mean(na.omit(pull(unemp_df, percentage)))`%.
 
 For the resulting `df`, it has `r nrow(df)` observations across `r ncol(df)` variables with years ranging from `r range(pull(df, year))[1]` to `r range(pull(df, year))[2]`. Variables include:
 
@@ -127,11 +127,17 @@ str(combined_df)
 
 ## Description:
 
-The `combined_df` comprises `r nrow(combined_df)` observations across `r ncol(combined_df)` variables, ranging from years `r range(combined_df$year)[1]` to `r range(combined_df$year)[2]`. The combined dataset includes information on the dumpter number, date of collection, amount of total litter and litter type as well as three different trash wheel(Mr. Trash Wheel, Professor Trash wheel, Gwynnda Trash Wheel). The total weight of trash collected by Professor Trash Wheel is `r filter(combined_df, trash_wheel=='professor')|>pull(weight_tons)|>sum()` tons. The total number of cigarette butts collected by Gwynnda in July of 2021 is `r filter(combined_df, trash_wheel=="gwynnda",year==2021,month=="July")|>pull(cigarette_butts)|>sum()`.
+The `mr_df`comprises `r nrow(mr_df)` observations across `r ncol(mr_df)` variables. Key variables include `dumpster`, `date`, `weight tons`,`homes powered` and `trash wheel (name)`.
+
+The `prof_df`comprises `r nrow(prof_df)` observations across `r ncol(prof_df)` variables. Key variables include `dumpster`, `date`, `weight tons`,`homes powered` and `trash wheel (name)`.
+
+The `gwy_df`comprises `r nrow(gwy_df)` observations across `r ncol(gwy_df)` variables. Key variables include `dumpster`, `date`, `weight tons`,`homes powered` and `trash wheel (name)`.
+
+The `combined_df` comprises `r nrow(combined_df)` observations across `r ncol(combined_df)` variables, ranging from years `r range(combined_df$year)[1]` to `r range(combined_df$year)[2]`. The combined dataset includes information on the `dumpster number`, `date of collection`, `amount of total litter` and `litter type` as well as `three different trash wheel(Mr. Trash Wheel, Professor Trash wheel, Gwynnda Trash Wheel)`. The total weight of trash collected by Professor Trash Wheel is `r filter(combined_df, trash_wheel=='professor')|>pull(weight_tons)|>sum()` tons. The total number of cigarette butts collected by Gwynnda in July of 2021 is `r filter(combined_df, trash_wheel=="gwynnda",year==2021,month=="July")|>pull(cigarette_butts)|>sum()`.
 
 # Problem 3
 
-Import `MCI baseline` data, and skip the first row of description. I use `janitor` function to standardize column names. Then convert `sex` variable and `apoe4` variable to factor variable, and convert `age at onset` variable to numeric variable.
+Import `MCI baseline` data, and skip the first row of description. I use `janitor` function to standardize column names. Then convert `sex` variable and `apoe4` variable to factor variable, and convert `age at onset` variable to numeric variable. Then use `filter` function to drop participants who do not meet the stated inclusion criteria.
 ```{r}
 baseline_df=
   read_csv("data/MCI_baseline.csv",skip=1)|>
@@ -146,36 +152,47 @@ baseline_df=
 
 ## Discussion
 
-The `MCI baseline` data comprises `r nrow(baseline_df)` observations across `r ncol(baseline_df)` variables. The dataset contains information of current age, sex, year of education, APOE4 carrier and age at onset of MCI. For participants who develop MCI, their average baseline age is `r round(mean(baseline_df$current_age),2)`, and their current age ranges from `r range(baseline_df$current_age)[1]` to `r range(baseline_df$current_age)[2]`. Altogether, `r nrow(read_csv("data/MCI_baseline.csv",skip=1))` participates are recruited. Among them, `r nrow(baseline_df)` develop MCI. In the study, `r round(nrow(filter(baseline_df, sex==0,apoe4==1))/nrow(filter(baseline_df,sex==0))*100,2)`%  women are APOE4 carriers.
+The `MCI baseline` data comprises `r nrow(baseline_df)` observations across `r ncol(baseline_df)` variables. The dataset contains information of `current age`, `sex`, `years of education`, `whether APOE4 carrier` and `age at onset of MCI`. For participants who develop MCI, their average baseline age is `r round(mean(baseline_df$current_age),2)`, and their current age ranges from `r range(baseline_df$current_age)[1]` to `r range(baseline_df$current_age)[2]`. Altogether, `r nrow(read_csv("data/MCI_baseline.csv",skip=1))` participates are recruited. Among them, `r nrow(baseline_df)` develop MCI. In the study, `r round(nrow(filter(baseline_df, sex==0,apoe4==1))/nrow(filter(baseline_df,sex==0))*100,2)`%  women are APOE4 carriers.
 
-Next, clean `MCI amyloid` data, and skip the first row of description. I use `janitor` function to standardize column names. Then, turn all columns to numeric variable.
+Next, clean `MCI amyloid` data, and skip the first row of description. I use `janitor` function to standardize column names. Then, I rename the `study_id` variable to `id` for merging purpose and `baseline` variable to `time_0` for consistency. `Pivot longer` function was used to tidy the dataset of longitudinally observed biomarker values. Finally, turn all columns to numeric variable.
+
+
 ```{r}
 amyloid_df=
   read_csv("data/mci_amyloid.csv",skip=1,na=c('Na',"NA"))|>
   janitor::clean_names()|>
   rename(id=study_id,time_0=baseline)|>
   pivot_longer(
-    baseline:time_8,
+    time_0:time_8,
     names_to="time",
     values_to="42/40 ratio",
-    prefix_names("time_")
+    names_prefix = ("time_")
   )|>
   as.data.frame(lapply(amyloid_df, as.numeric))
 ```
 
 ## Discussion
 
-The `MCI amyloid` data comprises `r nrow(amyloid_df)` observations across `r ncol(amyloid_df)` variables. The dataset keeps record of biomarker Amyloid β42/40 ratio in different time.
+The `amyloid_df` comprises `r nrow(amyloid_df)` observations across `r ncol(amyloid_df)` variables. The dataset keeps record of biomarker Amyloid β42/40 ratio in different time. Key variables are `id`, `time` and `β42/40 ratio`. The `β42/40 ratio` variable has some `NA` values will be dropped in the next step.
 
-Time to merge this two datasets.
+Now check whether some participants appear in only the baseline or amyloid datasets.
 
 ```{r}
-merged_df=merge(baseline_df,amyloid_df,by="id",all=FALSE)
+only_baseline=setdiff(baseline_df$id,amyloid_df$id)
+only_amyloid=setdiff(amyloid_df$id,baseline_df$id)
+```
+
+As shown, id of `r only_baseline` only appear in the baseline dataset. Id of `r only_amyloid` only appear in the amyloid dataset, altogether `r length(only_amyloid)` ids.
+
+Time to merge these two datasets! Rows with `NA` are dropped.
+
+```{r}
+merged_df=merge(baseline_df,amyloid_df,by="id",all=FALSE)|>drop_na()
 write_csv(merged_df,"data/merged_df.csv")
 str(merged_df)
 ```
 
-
+The `merged_df` comprises `r nrow(merged_df)` observations across `r ncol(merged_df)` variables. Key variables include `id`, `current age`, `sex`, `education of year`, `whether apoe4 carrier`, `age at onset`, `time` and `amyloid ratio`.
 
 
 
